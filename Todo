@@ -1,0 +1,9 @@
+#To do 
+#setup the api
+#create model to setup database
+#setup reddit
+#setup email feature
+#authentication ((r)ole (b)ased (a)ccess (c)ontroll)
+#authorization
+#crud  (create read update delete) operation on books by the librarian
+#borrow
