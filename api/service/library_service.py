@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, status
 from ..models.user_model import User
 from ..models.book_model import Book, BookLoan
 from ..schemas.book_schema import AddBookRequest
+from ..utils import success_response, failure_response
 
 
 class LibraryService:
@@ -12,8 +13,8 @@ class LibraryService:
         try:
             book_check = db.query(Book).filter_by(isbn=book_data.isbn).first()
             if book_check:
-                return {"message": " Book with this information already exsists",
-                        "status":status.HTTP_400_BAD_REQUEST}
+                return failure_response(message= " Book with this information already exsists",
+                        status_code=400)
             new_book= Book(
                 title =book_data.title,
                 genre= book_data.genre,
@@ -21,15 +22,19 @@ class LibraryService:
                 publisher = book_data.publisher,
                 year_of_publication = book_data.year_of_publication,
                 number_of_pages = book_data.number_of_pages,
-                language= book_data.language
+                language= book_data.language,
+                isbn= book_data.isbn
+
             )
             db.add(new_book)
             db.commit()
-            return {
-                "message":"Book added successfully",
-                "status": 201,
-                "data": new_book
-            }
+            return success_response(status_code=200, message="Book added successfully")
 
         except Exception as e:
             raise HTTPException(status_code= 400, detail=str(e))
+
+
+    @staticmethod
+    def get_all_books(db:Session):
+        books=db.query(Book).all()
+        return success_response(status_code=200, message="Books Retrived With Success", data= books)

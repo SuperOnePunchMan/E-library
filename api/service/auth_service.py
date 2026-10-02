@@ -36,7 +36,7 @@ class AuthService:
         else:
             expire=datetime.now(timezone.utc) + timedelta(minutes= int(os.getenv("ACCESS_TOKEN_EXPIRES")))
         data_to_encode.update({"exp":expire, "type": "access"})
-        encode_jwt = jwt.encode(data_to_encode, secrets.token_hex(16))
+        encode_jwt = jwt.encode(data_to_encode,os.getenv("JWT_SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
         return encode_jwt
 
     @staticmethod
@@ -138,14 +138,14 @@ class AuthService:
                     }
                 }
             )
-            print(access_token)
+
 
             res.set_cookie(
                 key="access_token",
                 value=access_token,
                 httponly=True,
-                max_age= (int(os.getenv("ACCESS_TOKEN_EXPIRES"))*60),
-                expires=(int(os.getenv("ACCESS_TOKEN_EXPIRES"))*60),
+                max_age= (int(os.getenv("ACCESS_TOKEN_EXPIRES"))*3600),
+                expires=(int(os.getenv("ACCESS_TOKEN_EXPIRES"))*3600),
                 secure=None,
                 samesite="lax",
                 path="/",
@@ -163,8 +163,8 @@ class AuthService:
                 path="/",
                 domain= None
             )
-
-            return{"Message": "Successfull Login", "data": res}
+            
+            return res 
         except Exception as e:
             raise HTTPException (status_code=400, detail=str(e))
 

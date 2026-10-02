@@ -32,7 +32,7 @@ def success_response(status_code:int, message: str, data: Optional[Dict]= None):
 
 def failure_response(status_code:int, message: str, data: Optional[Dict]= None):
     response_data = {
-        "status": "faliure",
+        "status": status_code,
         "message": message,
         "data": data or {}
     }

@@ -9,3 +9,6 @@ class AddBookRequest(BaseModel):
     number_of_pages:str= Field()
     language: str= Field()
     isbn: str=Field()
+
+    class Config:
+        from_attributes= True
