@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, Response
 from sqlalchemy.orm import Session
 from ..db import get_db
-from ..schemas.book_schema import AddBookRequest, UpdateBookRequest
+from ..schemas.book_schema import AddBookRequest, UpdateBookRequest, BookResponse
 from ..service.library_service import LibraryService
 from ..dependencies import role_required, get_current_user
 from ..utils import success_response, failure_response
@@ -156,14 +156,14 @@ def get_all_books(db:Session=Depends(get_db), current_user=Depends(get_current_u
             }
             )
 
-def get_book_by_id(id:int, db:Session=Depends(get_db)):
+def get_book_by_id(id:int, db:Session=Depends(get_db))->dict:
     book= LibraryService.get_book_by_id(db=db, id=id)
     return book
 
 
 @book_route.patch(path="/{id}",
             status_code= 200,
-            response_model= None,
+            response_model= success_response,
             summary= "Get Book",
             responses=
             {
@@ -206,6 +206,6 @@ def get_book_by_id(id:int, db:Session=Depends(get_db)):
             }
             )
 
-def update_route(id:id, update_request:UpdateBookRequest, db:Session=Depends(get_db), current_user=Depends(role_required(["2"])))->dict[str,any]:
+def update_route(id:id, update_request:UpdateBookRequest, db:Session=Depends(get_db), current_user=Depends(role_required(["2"])))->dict:
     update= LibraryService.update_book_by_id(db=db, id=id, update_request=update_request)
     return update

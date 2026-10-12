@@ -60,18 +60,27 @@ class LibraryService:
             raise HTTPException(status_code=400, detail=str(e) )
 
     @staticmethod
-    def update_book_by_id(db:Session, id:id, update_request:UpdateBookRequest)->dict:
+    def update_book_by_id(db:Session, id:id, update_request:UpdateBookRequest):
         try:
             retrieve_book= db.query(Book).filter_by(id= id).first()
             if not retrieve_book:
                 return failure_response(status_code= 404, message=" Book not found")
             
-            book= UpdateBookRequest.model_validate(retrieve_book).model_dump()
+            book= UpdateBookRequest.model_validate(retrieve_book).model_dump(exclude_unset= True)
             for field, value in book.items():
                 setattr(retrieve_book, field, value)
 
             db.commit()
             db.refresh(retrieve_book)
+            # updated_book= {"id": retrieve_book.id,
+            #                "title": retrieve_book.title,
+            #                "genre":retrieve_book.genre,
+            #                "author": retrieve_book.author,
+            #                "publisher":retrieve_book.publisher,
+            #                "year_of_publication":retrieve_book.publisher,
+            #                "number_of_pages":retrieve_book.number_of_pages,
+            #                "language":retrieve_book.language,
+            #                "isbn": retrieve_book.isbn}
             return success_response(status_code=200, message= "Book found!", data= book)
         except Exception as e:
             raise HTTPException(status_code=400, detail= str(e))

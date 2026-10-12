@@ -21,3 +21,16 @@ class UpdateBookRequest(BaseModel):
     year_of_publication:str | None=None
     number_of_pages:str | None=None
     language: str | None=None
+
+    class Config:
+        from_attribute = True
+class BookResponse(BaseModel):
+    title:str
+    genre:str 
+    author:str
+    publisher:str
+    year_of_publication:str
+    number_of_pages:str
+    language: str
+    isbn: str
+
