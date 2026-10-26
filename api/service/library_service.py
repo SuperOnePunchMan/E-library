@@ -22,6 +22,7 @@ class LibraryService:
                 publisher = book_data.publisher,
                 year_of_publication = book_data.year_of_publication,
                 number_of_pages = book_data.number_of_pages,
+                quantity= book_data.quantity,
                 language= book_data.language,
                 isbn= book_data.isbn
 
@@ -60,28 +61,40 @@ class LibraryService:
             raise HTTPException(status_code=400, detail=str(e) )
 
     @staticmethod
-    def update_book_by_id(db:Session, id:id, update_request:UpdateBookRequest):
+    def update_book_by_id(db:Session, id:int, update_request:UpdateBookRequest):
         try:
             retrieve_book= db.query(Book).filter_by(id= id).first()
             if not retrieve_book:
                 return failure_response(status_code= 404, message=" Book not found")
             
-            book= UpdateBookRequest.model_validate(retrieve_book).model_dump(exclude_unset= True)
+            book= update_request.model_dump(exclude_unset= True)
             for field, value in book.items():
                 setattr(retrieve_book, field, value)
 
             db.commit()
             db.refresh(retrieve_book)
-            # updated_book= {"id": retrieve_book.id,
-            #                "title": retrieve_book.title,
-            #                "genre":retrieve_book.genre,
-            #                "author": retrieve_book.author,
-            #                "publisher":retrieve_book.publisher,
-            #                "year_of_publication":retrieve_book.publisher,
-            #                "number_of_pages":retrieve_book.number_of_pages,
-            #                "language":retrieve_book.language,
-            #                "isbn": retrieve_book.isbn}
+            updated_book= {"id": retrieve_book.id,
+                           "title": retrieve_book.title,
+                           "genre":retrieve_book.genre,
+                           "author": retrieve_book.author,
+                           "publisher":retrieve_book.publisher,
+                           "year_of_publication":retrieve_book.publisher,
+                           "number_of_pages":retrieve_book.number_of_pages,
+                           "language":retrieve_book.language,
+                           "isbn": retrieve_book.isbn}
             return success_response(status_code=200, message= "Book found!", data= book)
         except Exception as e:
             raise HTTPException(status_code=400, detail= str(e))
-            
+        
+    @staticmethod
+    def delete_book_by_id(db:Session, id:int):
+        try:
+            retrieve_book= db.query(Book).filter_by(id=id).first()
+            if not retrieve_book:
+                return failure_response(status_code=404, message="Book not found!")
+            db.delete(retrieve_book)
+            db.commit()
+            return success_response(status_code=200, message= "Book deleted succesfully")
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=400, detail= str(e))

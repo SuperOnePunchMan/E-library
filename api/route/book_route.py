@@ -206,6 +206,57 @@ def get_book_by_id(id:int, db:Session=Depends(get_db))->dict:
             }
             )
 
-def update_route(id:id, update_request:UpdateBookRequest, db:Session=Depends(get_db), current_user=Depends(role_required(["2"])))->dict:
+def update_route(id:int, update_request:UpdateBookRequest, db:Session=Depends(get_db), current_user=Depends(role_required(["2"])))->dict:
     update= LibraryService.update_book_by_id(db=db, id=id, update_request=update_request)
     return update
+
+
+
+@book_route.delete(path="/{id}",
+            status_code= 200,
+            response_model= success_response,
+            summary= "Delete Book by id",
+            responses=
+            {
+                200:{
+                    "description": " Successfullly deleted book",
+                    "content": {
+                        "Application/json":{
+                            "example":{
+                                "Message": " Book deleted successfully",
+                                "Status":200,
+                                "data":{}
+                            }
+                        }
+                    }
+                },
+                400:{
+                    "description": "Bad Request",
+                    "content":{
+                        "Application/json":{
+                            "example":{
+                                "Message": "Bad Request",
+                                "Status":400,
+                                "data":{}
+                                }
+                            }
+                        }
+                    },
+                401:{
+                    "description": "Unauthorized",
+                    "content":{
+                        "Application/json":{
+                            "example":{
+                                "Message": "UNAUTHORIZED",
+                                "Status":401,
+                                "data": {}
+                            }
+                        }
+                    }
+                }
+            }
+            )
+
+def delete_route(id:int, db:Session=Depends(get_db), current_user=Depends(role_required(["2"]))):
+    remove_book= LibraryService.delete_book_by_id(db=db, id=id)
+    return remove_book

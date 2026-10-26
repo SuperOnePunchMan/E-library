@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, model_validator, field_validator, ConfigDict
+from typing import Optional
 
 class AddBookRequest(BaseModel):
     title:str = Field()
@@ -7,6 +8,7 @@ class AddBookRequest(BaseModel):
     publisher:str= Field()
     year_of_publication:str= Field()
     number_of_pages:str= Field()
+    quantity:Optional[int]=Field(None)
     language: str= Field()
     isbn: str=Field()
 
@@ -23,7 +25,7 @@ class UpdateBookRequest(BaseModel):
     language: str | None=None
 
     class Config:
-        from_attribute = True
+        from_attributes = True
 class BookResponse(BaseModel):
     title:str
     genre:str 
@@ -33,4 +35,6 @@ class BookResponse(BaseModel):
     number_of_pages:str
     language: str
     isbn: str
+
+
 
