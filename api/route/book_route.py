@@ -13,7 +13,7 @@ book_route= APIRouter(prefix="/book",tags=["library"])
 @book_route.post(path="/library_route",
             status_code= 200,
             response_model= success_response,
-            summary= "Library service",
+            summary= "Add Book To Libray",
             responses=
             {
                 200:{
@@ -164,7 +164,7 @@ def get_book_by_id(id:int, db:Session=Depends(get_db))->dict:
 @book_route.patch(path="/{id}",
             status_code= 200,
             response_model= success_response,
-            summary= "Get Book",
+            summary= "Update Book Detail",
             responses=
             {
                 200:{

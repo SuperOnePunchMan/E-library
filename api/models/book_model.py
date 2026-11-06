@@ -25,7 +25,7 @@ class BookLoan(Base):
     id= Column(Integer, primary_key= True)
     book_id= Column(Integer,ForeignKey("books.id"))
     user_id= Column(Integer, ForeignKey("users.id"))
-    date_borrowed= Column(String, default=datetime.now())
+    date_borrowed= Column(DateTime, default=datetime.now)
     expected_return_date=Column(DateTime, nullable=True)
     return_status= Column(Boolean, default=False)
     book = relationship("Book", back_populates="book_loan" )
@@ -35,7 +35,10 @@ class BookLoan(Base):
         #super().__init__()
         self.book_id= book_id
         self.user_id= user_id
-        self.expected_return_date= return_date
+        self.date_burrowed= datetime.now()
+        if return_date:
+            self.expected_return_date= return_date
+        self.caculate_expected_return_date= return_date
 
     def caculate_expected_return_date(self):
         if self.date_borrowed:
